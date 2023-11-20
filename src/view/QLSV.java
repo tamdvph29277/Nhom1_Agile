@@ -308,6 +308,7 @@ public class QLSV extends javax.swing.JFrame {
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         this.clearForm();
+        
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
@@ -368,7 +369,11 @@ public class QLSV extends javax.swing.JFrame {
         this.txtTen.setText(hoTen);
         this.txtEmail.setText(email);
         this.txtSdt.setText(sdt);
-        this.rdoNam.setSelected(true);
+          if (gioiTinh.equals("Nam")) {
+            rdoNam.setSelected(true);
+        } else {
+            rdoNu.setSelected(true);
+        }
         this.tarDiachi.setText(diaChi);
         this.lbAnh.setText(hinh);
     }//GEN-LAST:event_tblSinhVienMouseClicked
