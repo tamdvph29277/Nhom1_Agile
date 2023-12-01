@@ -67,9 +67,10 @@ public class DiemSinhVien {
 
    
 
-    public String diemtb(){
-        double diem = ((getTiengAnh()+getTinHoc()+getGDTC())/3);
-        String d = String.format("%.1f", diem);
-        return d;
-    }
+   public String diemtb() {
+    double diem = (getTiengAnh() + getTinHoc() + getGDTC()) / 3.0;
+    String diemFormatted = String.format("%.1f", diem);
+    return diemFormatted;
+}
+
 }

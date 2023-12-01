@@ -4,6 +4,7 @@ package repository;
 import java.util.ArrayList;
 import model.DiemSinhVien;
 import java.sql.*;
+import java.util.Comparator;
 import model.SinhVien;
 
 /**
@@ -11,35 +12,41 @@ import model.SinhVien;
  * @author Admin
  */
 public class DiemSvRepository {
-    public ArrayList<DiemSinhVien>all(){
-        ArrayList<DiemSinhVien>list = new ArrayList<>();
-        try {
-            Connection conn = DBContext.getConnection();
-            String sql = "select * from diem_sv join sinh_vien on diem_sv.maSv = sinh_vien.maSv";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.execute();
-            ResultSet rs = ps.getResultSet();
-            
-            while(rs.next()){
-             int id = rs.getInt("id");
-             String hoTen = rs.getString("ho_ten");
-             String maSv = rs.getString("maSv");
-                SinhVien sv = new SinhVien();
-                sv.setMaSv(maSv);
-                sv.setHoTen(hoTen);
-             int tiengAnh = rs.getInt("tieng_anh");
-             int tinHoc = rs.getInt("tin_hoc");
-             int GDTC = rs.getInt("GDTC");
-             
-             DiemSinhVien dsv = new DiemSinhVien(id, sv, tiengAnh, tinHoc, GDTC);
-             list.add(dsv);
-            }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
+   public ArrayList<DiemSinhVien> all() {
+    ArrayList<DiemSinhVien> list = new ArrayList<>();
+
+    try {
+        Connection conn = DBContext.getConnection();
+        String sql = "SELECT * FROM diem_sv JOIN sinh_vien ON diem_sv.maSv = sinh_vien.maSv";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.execute();
+        ResultSet rs = ps.getResultSet();
+
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String hoTen = rs.getString("ho_ten");
+            String maSv = rs.getString("maSv");
+            SinhVien sv = new SinhVien();
+            sv.setMaSv(maSv);
+            sv.setHoTen(hoTen);
+            int tiengAnh = rs.getInt("tieng_anh");
+            int tinHoc = rs.getInt("tin_hoc");
+            int GDTC = rs.getInt("GDTC");
+
+            DiemSinhVien dsv = new DiemSinhVien(id, sv, tiengAnh, tinHoc, GDTC);
+            list.add(dsv);
         }
-        return list;
+
+        // Sắp xếp danh sách theo điểm trung bình từ cao đến thấp
+        list.sort(Comparator.comparingDouble(d -> -Double.parseDouble(d.diemtb())));
+
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+
+    return list;
+}
+
     
     public boolean insert(DiemSinhVien dsv){
         try {
