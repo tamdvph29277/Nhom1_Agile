@@ -101,6 +101,14 @@ public class QLDSV extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setText("Mã Sv:");
 
+        txtTim.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                txtTimInputMethodTextChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -342,7 +350,7 @@ public class QLDSV extends javax.swing.JFrame {
 
     public void loadTable() {
 
-        ArrayList<DiemSinhVien> list = this.service.all();
+        List<DiemSinhVien> list = this.service.all();
         model.setRowCount(0);
 
         for (DiemSinhVien d : list) {
@@ -354,8 +362,8 @@ public class QLDSV extends javax.swing.JFrame {
                 d.getGDTC(),
                 d.diemtb()}
             );
+            this.initSearch();
         }
-        this.initSearch();
     }
 
     public void initSearch() {
@@ -432,6 +440,7 @@ public class QLDSV extends javax.swing.JFrame {
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         this.clearForm();
+        this.loadTable();
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
@@ -552,6 +561,10 @@ public class QLDSV extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtTimInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_txtTimInputMethodTextChanged
+
+    }//GEN-LAST:event_txtTimInputMethodTextChanged
 
     /**
      * @param args the command line arguments

@@ -73,4 +73,8 @@ public class DiemSinhVien {
     return diemFormatted;
 }
 
+    public Object getHoTen() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 }

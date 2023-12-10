@@ -119,7 +119,7 @@ public class DangNhap extends javax.swing.JFrame {
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
         try {
-            if (txtTen.getText().equals("admin") && txtPass.getText().equals("123")) {
+            if (txtTen.getText().equals("admin") && txtPass.getText().equals("1")) {
                 JOptionPane.showMessageDialog(rootPane, "Đăng nhập thành công");
                 QLSV sv = new QLSV();
                 sv.setVisible(true);
