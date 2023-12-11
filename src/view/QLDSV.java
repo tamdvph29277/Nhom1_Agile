@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -350,7 +351,7 @@ public class QLDSV extends javax.swing.JFrame {
 
     public void loadTable() {
 
-        List<DiemSinhVien> list = this.service.all();
+        list = this.service.all();
         model.setRowCount(0);
 
         for (DiemSinhVien d : list) {
@@ -384,27 +385,54 @@ public class QLDSV extends javax.swing.JFrame {
             }
 
             public void search() {
-                DefaultTableModel model = (DefaultTableModel) tblBangDiem.getModel();
-                model.setRowCount(0);
-                String code = txtTim.getText();
-                List<DiemSinhVien> tempList = new ArrayList<>();
-                for (DiemSinhVien item : list) {
-                    if (item.getSinhVien().getHoTen().contains(code)) {
-                        tempList.add(item);
+                System.out.println("Search triggered");
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        DefaultTableModel model = (DefaultTableModel) tblBangDiem.getModel();
+                        model.setRowCount(0);
+                        String code = txtTim.getText().toLowerCase(); // Chuyển đổi sang chữ thường để tìm kiếm không phân biệt chữ hoa, chữ thường
+
+                        if (code.isEmpty()) {
+                            // Nếu code trống, hiển thị toàn bộ danh sách SinhVien
+                            for (DiemSinhVien d : list) {
+                                model.addRow(new Object[]{
+                                    d.getSinhVien().getHoTen(),
+                                    d.getSinhVien().getMaSv(),
+                                    d.getTiengAnh(),
+                                    d.getTinHoc(),
+                                    d.getGDTC(),
+                                    d.diemtb()}
+                                );
+
+                            }
+                        } else {
+                            // Nếu code không trống, thực hiện tìm kiếm và hiển thị kết quả
+                            List<DiemSinhVien> tempList = new ArrayList<>();
+                            for (DiemSinhVien item : list) {
+                                if (item.getSinhVien().getHoTen().toLowerCase().contains(code)) {
+                                    tempList.add(item);
+                                }
+                            }
+                            for (DiemSinhVien d : tempList) {
+                                model.addRow(new Object[]{
+                                    d.getSinhVien().getHoTen(),
+                                    d.getSinhVien().getMaSv(),
+                                    d.getTiengAnh(),
+                                    d.getTinHoc(),
+                                    d.getGDTC(),
+                                    d.diemtb()}
+                                );
+
+                            }
+                        }
                     }
-                }
-                for (DiemSinhVien d : tempList) {
-                    model.addRow(new Object[]{
-                        d.getSinhVien().getHoTen(),
-                        d.getSinhVien().getMaSv(),
-                        d.getTiengAnh(),
-                        d.getTinHoc(),
-                        d.getGDTC(),
-                        d.diemtb()}
-                    );
-                }
+                });
             }
         });
+        System.out.println("Danh sách SinhVien: " + list);
+        System.out.println("RowCount: " + model.getRowCount());
+
     }
 
     public void clearForm() {

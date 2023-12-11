@@ -2,11 +2,17 @@ package view;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import model.DiemSinhVien;
 import model.SinhVien;
@@ -20,6 +26,7 @@ public class QLSV extends javax.swing.JFrame {
 
     private SinhVienService service = new SinhVienService();
     private DefaultTableModel model;
+    private List<SinhVien> list = new ArrayList<>();
 
     public QLSV() {
         initComponents();
@@ -46,7 +53,7 @@ public class QLSV extends javax.swing.JFrame {
     }
 
     public void loadTable() {
-        ArrayList<SinhVien> list = this.service.all();
+        list = this.service.all();
         model.setRowCount(0);
 
         for (SinhVien sv : list) {
@@ -59,6 +66,76 @@ public class QLSV extends javax.swing.JFrame {
                 sv.getDiachi(),
                 sv.getHinh()});
         }
+        System.out.println("Danh sách SinhVien: " + list);
+        this.initSearch();
+    }
+
+    public void initSearch() {
+        txtTim.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                search();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                search();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                search();
+            }
+
+            public void search() {
+                System.out.println("Search triggered");
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        DefaultTableModel model = (DefaultTableModel) tblSinhVien.getModel();
+                        model.setRowCount(0);
+                        String code = txtTim.getText().toLowerCase(); // Chuyển đổi sang chữ thường để tìm kiếm không phân biệt chữ hoa, chữ thường
+
+                        if (code.isEmpty()) {
+                            // Nếu code trống, hiển thị toàn bộ danh sách SinhVien
+                            for (SinhVien sv : list) {
+                                model.addRow(new Object[]{
+                                    sv.getMaSv(),
+                                    sv.getHoTen(),
+                                    sv.getEmail(),
+                                    sv.getSdt(),
+                                    sv.isGioiTinh() ? "Nam" : "Nữ",
+                                    sv.getDiachi(),
+                                    sv.getHinh()
+                                });
+                            }
+                        } else {
+                            // Nếu code không trống, thực hiện tìm kiếm và hiển thị kết quả
+                            List<SinhVien> tempList = new ArrayList<>();
+                            for (SinhVien item : list) {
+                                if (item.getHoTen().toLowerCase().contains(code)) {
+                                    tempList.add(item);
+                                }
+                            }
+                            for (SinhVien sv : tempList) {
+                                model.addRow(new Object[]{
+                                    sv.getMaSv(),
+                                    sv.getHoTen(),
+                                    sv.getEmail(),
+                                    sv.getSdt(),
+                                    sv.isGioiTinh() ? "Nam" : "Nữ",
+                                    sv.getDiachi(),
+                                    sv.getHinh()
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+        });
+        System.out.println("Danh sách SinhVien: " + list);
+        System.out.println("RowCount: " + model.getRowCount());
+
     }
 
     public void clearForm() {
@@ -100,6 +177,8 @@ public class QLSV extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         tblSinhVien = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
+        txtTim = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setFont(new java.awt.Font("Agency FB", 0, 14)); // NOI18N
@@ -211,6 +290,15 @@ public class QLSV extends javax.swing.JFrame {
             }
         });
 
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel8.setText("Tìm kiếm:");
+
+        txtTim.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTimActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -220,9 +308,12 @@ public class QLSV extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addGap(158, 158, 158)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
                                 .addGap(76, 76, 76)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 607, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 607, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addGroup(layout.createSequentialGroup()
@@ -254,10 +345,11 @@ public class QLSV extends javax.swing.JFrame {
                                                 .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(18, 18, 18)
                                                 .addComponent(btnUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(158, 158, 158)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(txtTim, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                         .addGap(0, 55, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -315,9 +407,13 @@ public class QLSV extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(8, 8, 8)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(38, 38, 38)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(txtTim, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -325,7 +421,7 @@ public class QLSV extends javax.swing.JFrame {
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         this.clearForm();
-           btnSave.setEnabled(true);
+        btnSave.setEnabled(true);
         btnUpdate.setEnabled(false);
         btnDelete.setEnabled(false);
     }//GEN-LAST:event_btnNewActionPerformed
@@ -388,14 +484,14 @@ public class QLSV extends javax.swing.JFrame {
         this.txtTen.setText(hoTen);
         this.txtEmail.setText(email);
         this.txtSdt.setText(sdt);
-          if (gioiTinh.equals("Nam")) {
+        if (gioiTinh.equals("Nam")) {
             rdoNam.setSelected(true);
         } else {
             rdoNu.setSelected(true);
         }
         this.tarDiachi.setText(diaChi);
         this.lbAnh.setText(hinh);
-        
+
         btnSave.setEnabled(false);
         btnUpdate.setEnabled(true);
         btnDelete.setEnabled(true);
@@ -483,6 +579,10 @@ public class QLSV extends javax.swing.JFrame {
         sp.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void txtTimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTimActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTimActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -533,6 +633,7 @@ public class QLSV extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -545,5 +646,6 @@ public class QLSV extends javax.swing.JFrame {
     private javax.swing.JTextField txtMa;
     private javax.swing.JTextField txtSdt;
     private javax.swing.JTextField txtTen;
+    private javax.swing.JTextField txtTim;
     // End of variables declaration//GEN-END:variables
 }

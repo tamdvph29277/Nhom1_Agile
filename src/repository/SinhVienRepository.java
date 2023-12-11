@@ -14,7 +14,7 @@ public class SinhVienRepository {
         ArrayList<SinhVien> list = new ArrayList<>();
         try {
             Connection conn = DBContext.getConnection();
-            String sql = "SELECT * FROM sinh_vien";
+            String sql = "SELECT * FROM sinh_vien ORDER BY maSv DESC";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
